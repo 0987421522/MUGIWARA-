@@ -1,5 +1,6 @@
 package com.mugiwara.service.trading
 
+import kotlin.math.pow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,21 +23,21 @@ class MoneyManager @Inject constructor() {
         
         val kelly = (winRate * b - q) / b
         
-        return kelly.coerceIn(0.0, 0.25) // Half Kelly for safety
+        return kelly.coerceIn(0.0, 0.25)
     }
     
     fun calculateMartingaleMultiplier(
         consecutiveLosses: Int,
         baseMultiplier: Double = 2.0
     ): Double {
-        return kotlin.math.pow(baseMultiplier, consecutiveLosses.toDouble())
+        return baseMultiplier.pow(consecutiveLosses.toDouble())
     }
     
     fun calculateAntiMartingaleMultiplier(
         consecutiveWins: Int,
         baseMultiplier: Double = 1.5
     ): Double {
-        return kotlin.math.pow(baseMultiplier, consecutiveWins.toDouble())
+        return baseMultiplier.pow(consecutiveWins.toDouble())
     }
     
     fun shouldCompound(

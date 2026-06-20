@@ -82,6 +82,7 @@ fun MarketsScreen() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MarketCard(market: Market) {
     val changeColor = if (market.change >= 0) Color(0xFF4CAF50) else Color(0xFFCF6679)
