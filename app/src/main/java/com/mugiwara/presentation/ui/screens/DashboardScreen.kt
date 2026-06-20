@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -19,17 +20,26 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.mugiwara.R
+import com.mugiwara.presentation.viewmodel.DashboardViewModel
+import com.mugiwara.utils.UiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen() {
+fun DashboardScreen(
+    viewModel: DashboardViewModel = hiltViewModel()
+) {
+    val statsState by viewModel.stats.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -55,66 +65,95 @@ fun DashboardScreen() {
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            DashboardStatCard(
-                title = stringResource(R.string.total_profit),
-                value = "+$1,247.50",
-                valueColor = Color(0xFF4CAF50),
-                modifier = Modifier.fillMaxWidth()
-            )
-            
-            DashboardStatCard(
-                title = stringResource(R.string.active_trades),
-                value = "7",
-                valueColor = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.fillMaxWidth()
-            )
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                DashboardStatCard(
-                    title = stringResource(R.string.win_rate),
-                    value = "68.5%",
-                    valueColor = Color(0xFF4CAF50),
-                    modifier = Modifier.weight(1f)
-                )
-                
-                DashboardStatCard(
-                    title = stringResource(R.string.balance),
-                    value = "$12,450.00",
-                    valueColor = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Recent Activity",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+            when (val state = statsState) {
+                is UiState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    }
+                }
+                is UiState.Success -> {
+                    val stats = state.data
+                    
+                    DashboardStatCard(
+                        title = stringResource(R.string.total_profit),
+                        value = "+$${String.format("%.2f", stats.totalProfit)}",
+                        valueColor = if (stats.totalProfit >= 0) Color(0xFF4CAF50) else Color(0xFFCF6679),
+                        modifier = Modifier.fillMaxWidth()
                     )
                     
-                    Spacer(modifier = Modifier.height(12.dp))
+                    DashboardStatCard(
+                        title = stringResource(R.string.active_trades),
+                        value = stats.activeTrades.toString(),
+                        valueColor = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                     
-                    ActivityItem("EUR/USD", "BUY", "+$45.20", Color(0xFF4CAF50))
-                    ActivityItem("GBP/JPY", "SELL", "-$12.50", Color(0xFFCF6679))
-                    ActivityItem("XAU/USD", "BUY", "+$89.00", Color(0xFF4CAF50))
-                    ActivityItem("BTC/USD", "SELL", "+$234.80", Color(0xFF4CAF50))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        DashboardStatCard(
+                            title = stringResource(R.string.win_rate),
+                            value = "${String.format("%.1f", stats.winRate)}%",
+                            valueColor = Color(0xFF4CAF50),
+                            modifier = Modifier.weight(1f)
+                        )
+                        
+                        DashboardStatCard(
+                            title = stringResource(R.string.balance),
+                            value = "$${String.format("%.2f", stats.balance)}",
+                            valueColor = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Recent Activity",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            
+                            Spacer(modifier = Modifier.height(12.dp))
+                            
+                            ActivityItem("EUR/USD", "BUY", "+$45.20", Color(0xFF4CAF50))
+                            ActivityItem("GBP/JPY", "SELL", "-$12.50", Color(0xFFCF6679))
+                            ActivityItem("XAU/USD", "BUY", "+$89.00", Color(0xFF4CAF50))
+                            ActivityItem("BTC/USD", "SELL", "+$234.80", Color(0xFF4CAF50))
+                        }
+                    }
                 }
+                is UiState.Error -> {
+                    Text(
+                        text = "Error: ${state.message}",
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                else -> {}
             }
         }
+    }
+}
+
+@Composable
+fun Box(modifier: Modifier = Modifier, contentAlignment: Alignment, content: @Composable () -> Unit) {
+    androidx.compose.foundation.layout.Box(modifier = modifier, contentAlignment = contentAlignment) {
+        content()
     }
 }
 
