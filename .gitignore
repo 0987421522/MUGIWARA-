@@ -32,4 +32,14 @@ Thumbs.db
 # Keystore
 *.jks
 *.keystore
-local.properties
+
+# NDK
+obj/
+
+# CMake
+cmake-build-*/
+
+# Misc
+*.swp
+*.swo
+*~
