@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.MUGIWARA" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/mugi_primary</item>
+        <item name="colorPrimaryDark">@color/mugi_primary_dark</item>
+        <item name="colorAccent">@color/mugi_accent</item>
+        <item name="android:colorBackground">@color/mugi_background</item>
+        <item name="colorSurface">@color/mugi_surface</item>
+        <item name="colorError">@color/mugi_error</item>
+        <item name="android:textColorPrimary">@color/mugi_text_primary</item>
+        <item name="android:textColorSecondary">@color/mugi_text_secondary</item>
+        <item name="android:statusBarColor">@color/mugi_background</item>
+        <item name="android:navigationBarColor">@color/mugi_background</item>
+    </style>
+</resources>
