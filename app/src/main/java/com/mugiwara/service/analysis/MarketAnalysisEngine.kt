@@ -4,8 +4,8 @@ import com.mugiwara.data.model.MarketEntity
 import com.mugiwara.data.model.SignalEntity
 import com.mugiwara.data.repository.MarketRepository
 import com.mugiwara.data.repository.SignalRepository
-import com.mugiwara.utils.Constants
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import java.util.UUID
 import javax.inject.Inject
@@ -76,7 +76,7 @@ class MarketAnalysisEngine @Inject constructor(
         }
     }
     
-    fun analyzeAllMarkets(pricesMap: Map<String, List<Double>>): Flow<List<SignalEntity>> = flow {
+    suspend fun analyzeAllMarkets(pricesMap: Map<String, List<Double>>): List<SignalEntity> {
         val allSignals = mutableListOf<SignalEntity>()
         
         for ((symbol, prices) in pricesMap) {
@@ -127,7 +127,7 @@ class MarketAnalysisEngine @Inject constructor(
             }
         }
         
-        emit(allSignals)
+        return allSignals
     }
     
     private fun calculateStrength(prices: List<Double>, indicatorValues: Map<String, Double>): Double {
