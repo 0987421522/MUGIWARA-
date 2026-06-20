@@ -66,7 +66,7 @@ class TradeExecutionEngine @Inject constructor(
             
             val result = tradeRepository.openTrade(token, request)
             
-            if (result is com.mugiwara.utils.Result.Success) {
+            if (result is Result.Success) {
                 tradeRepository.addTrade(trade)
                 return Result.Success(trade)
             } else {
@@ -122,7 +122,8 @@ class TradeExecutionEngine @Inject constructor(
     suspend fun updateTrailingStops(
         activeTrades: List<TradeEntity>,
         currentPrices: Map<String, Double>,
-        settings: Settings
+        settings: Settings,
+        token: String
     ) {
         for (trade in activeTrades) {
             if (!settings.trailingStopEnabled) continue
@@ -138,7 +139,7 @@ class TradeExecutionEngine @Inject constructor(
             )
             
             if (newStopLoss != trade.stopLoss) {
-                modifyTrade(trade.id, newStopLoss, trade.takeProfit, "")
+                modifyTrade(trade.id, newStopLoss, trade.takeProfit, token)
             }
         }
     }

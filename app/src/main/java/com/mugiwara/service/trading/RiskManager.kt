@@ -20,8 +20,8 @@ class RiskManager @Inject constructor() {
         val lotSize = riskAmount / (stopLossPips * pipValue)
         
         return lotSize.coerceIn(
-            minimumValue = getMinLot(symbol),
-            maximumValue = getMaxLot(symbol)
+            getMinLot(symbol),
+            getMaxLot(symbol)
         )
     }
     
@@ -39,8 +39,8 @@ class RiskManager @Inject constructor() {
         
         val lotSize = riskAmount / priceRisk
         return lotSize.coerceIn(
-            minimumValue = getMinLot(symbol),
-            maximumValue = getMaxLot(symbol)
+            getMinLot(symbol),
+            getMaxLot(symbol)
         )
     }
     
