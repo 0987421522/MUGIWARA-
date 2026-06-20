@@ -1,24 +1,24 @@
 # MUGIWARA 🏴‍☠️
 
-Advanced Automated Trading Platform for MetaTrader 5
+منصة تداول آلي متقدمة لـ MetaTrader 5
 
-## 🎯 Features
+## 🎯 المميزات
 
-- **Multi-Account Support**: Manage multiple trading accounts simultaneously
-- **Market Analysis**: Real-time technical analysis with 5 indicators (RSI, MACD, MA, Bollinger Bands)
-- **AI Signal Filtering**: Intelligent signal evaluation with confidence scoring
-- **Auto Trading**: Fully automated trade execution based on signals
-- **Risk Management**: Advanced risk controls with daily limits and position sizing
-- **Money Management**: Kelly Criterion, Martingale, and Compound strategies
-- **Market Hours Detection**: Automatic market open/close detection for all asset classes
-- **Trailing Stop**: Dynamic stop-loss adjustment
-- **Notifications**: Real-time alerts for trades, profits, and market events
-- **Dark Theme**: Material Design 3 with custom dark theme
-- **Native Performance**: C++ NDK components for high-performance calculations
+- **دعم حسابات متعددة**: إدارة عدة حسابات تداول في نفس الوقت
+- **تحليل السوق**: تحليل فني فوري مع 5 مؤشرات (RSI, MACD, MA, Bollinger Bands)
+- **فلتر الإشارات بالذكاء الاصطناعي**: تقييم ذكي للإشارات مع درجة ثقة
+- **تداول آلي**: تنفيذ تلقائي للصفقات بناءً على الإشارات
+- **إدارة المخاطر**: ضوابط مخاطر متقدمة مع حدود يومية وتحديد حجم المركز
+- **إدارة رأس المال**: معيار كيلي، مارتينجال، واستراتيجيات المركبة
+- **اكتشاف أوقات السوق**: كشف تلقائي لفتح وإغلاق السوق لجميع فئات الأصول
+- **وقف متحرك**: تعديل ديناميكي لوقف الخسارة
+- **إشعارات**: تنبيهات فورية للصفقات، الأرباح، وأحداث السوق
+- **وضع ليلي**: تصميم Material Design 3 مع ثيم مظلم مخصص
+- **أداء أصلي**: مكونات C++ NDK لحسابات عالية الأداء
 
-## 📊 Supported Markets
+## 📊 الأسواق المدعومة
 
-| Market | Status |
+| السوق | الحالة |
 |--------|--------|
 | Forex | ✅ |
 | Gold | ✅ |
@@ -27,87 +27,87 @@ Advanced Automated Trading Platform for MetaTrader 5
 | Indices | ✅ |
 | Stocks | ✅ |
 
-## 🏗️ Architecture
+## 🏗️ البنية
 
 ```
 MUGIWARA/
 ├── app/
 │   ├── src/main/
 │   │   ├── java/com/mugiwara/
-│   │   │   ├── data/          # Data Layer
-│   │   │   ├── domain/        # Domain Layer
-│   │   │   ├── presentation/  # Presentation Layer
-│   │   │   ├── service/       # Services
-│   │   │   ├── di/            # Dependency Injection
-│   │   │   └── utils/         # Utilities
-│   │   ├── cpp/               # C++ NDK Components
-│   │   └── res/               # Android Resources
+│   │   │   ├── data/          # طبقة البيانات
+│   │   │   ├── domain/        # طبقة النطاق
+│   │   │   ├── presentation/  # طبقة العرض
+│   │   │   ├── service/       # الخدمات
+│   │   │   ├── di/            # حقن التبعية
+│   │   │   └── utils/         # الأدوات
+│   │   ├── cpp/               # مكونات C++ NDK
+│   │   └── res/               # موارد Android
 │   └── build.gradle.kts
 ├── gradle/
 └── .github/workflows/
 ```
 
-## 🛠️ Tech Stack
+## 🛠️ التقنيات المستخدمة
 
-- **Kotlin** - Primary language
-- **Java** - Secondary language
-- **C++** - Native performance components
-- **Android NDK** - Native development
-- **MVVM** - Architecture pattern
-- **Clean Architecture** - Code organization
-- **Hilt** - Dependency injection
-- **Room** - Local database
-- **Retrofit** - Network client
-- **OkHttp** - HTTP client
-- **WorkManager** - Background processing
-- **Material Design 3** - UI design
-- **Jetpack Compose** - UI toolkit
+- **Kotlin** - اللغة الأساسية
+- **Java** - اللغة الثانوية
+- **C++** - مكونات الأداء الأصلي
+- **Android NDK** - التطوير الأصلي
+- **MVVM** - نمط الهندسة المعمارية
+- **Clean Architecture** - تنظيم الكود
+- **Hilt** - حقن التبعية
+- **Room** - قاعدة البيانات المحلية
+- **Retrofit** - عميل الشبكة
+- **OkHttp** - عميل HTTP
+- **WorkManager** - المعالجة في الخلفية
+- **Material Design 3** - تصميم الواجهة
+- **Jetpack Compose** - أدوات واجهة المستخدم
 
-## 🚀 Getting Started
+## 🚀 البدء
 
-### Prerequisites
+### المتطلبات
 
-- Android Studio Hedgehog (2023.1.1) or later
+- Android Studio Hedgehog (2023.1.1) أو أحدث
 - Android SDK 34
 - Android NDK 25.2.9519653
 - JDK 17
 
-### Build
+### البناء
 
 ```bash
-# Clone the repository
+# استنساخ المستودع
 git clone https://github.com/yourusername/MUGIWARA.git
 
-# Build the project
+# بناء المشروع
 ./gradlew assembleDebug
 
-# Or build release
+# أو بناء الإصدار النهائي
 ./gradlew assembleRelease
 ```
 
-## 🤝 Contributing
+## 🤝 المساهمة
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+المساهمات مرحب بها! لا تتردد في تقديم طلب سحب.
 
-## 📄 License
+## 📄 الترخيص
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+هذا المشروع مرخص بموجب ترخيص MIT - راجع ملف LICENSE للتفاصيل.
 
 ---
 
-## 👨‍💻 Developer
+## 👨‍💻 المطور
 
-**LO - Abdul Wadud Al-Ali**
+**LO - عبد الودود العلي**
 
-Android Developer, Language Engineer, and Cybersecurity Researcher
+مطور Android، مهندس لغات، وباحث أمن سبراني
 
-### 📱 Connect with me
+### 📱 معلومات التواصل
 
-- **WhatsApp**: https://wa.me/963983351431
-- **YouTube**: https://youtube.com/channel/UCOBlDXzjPFlfuCkEbMCVfeA?si=mtbkh4dD6XtOI5pB
-- **YouTube 2**: https://youtube.com/channel/UCn7r4n8-1VGwHTLCkYXUErA?si=EOHsdo-jjB8aN2ph
-- **Instagram**: https://www.instagram.com/mugiwara.511
-- **Facebook**: https://www.facebook.com/share/18q3yjA4tX/
+- **واتساب**: +963 983 351 431
+- **يوتيوب**: قناة MUGIWARA
+- **يوتيوب 2**: قناة LO
+- **إنستغرام**: mugiwara.511
+- **فيسبوك**: LO Profile
 
 ---
 
