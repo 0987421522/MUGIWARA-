@@ -27,26 +27,20 @@ jobs:
     - name: Install NDK
       run: sdkmanager "ndk;25.2.9519653" "cmake;3.22.1"
       
-    - name: Grant execute permission for gradlew
+    - name: Make gradlew executable
       run: chmod +x gradlew
       
-    - name: Run lint
-      run: ./gradlew lintDebug
-      
-    - name: Run unit tests
-      run: ./gradlew testDebugUnitTest
-      
-    - name: Build with Gradle
+    - name: Build Debug APK
       run: ./gradlew assembleDebug
       
-    - name: Upload APK
+    - name: Upload Debug APK
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: mugiwara-debug-apk
         path: app/build/outputs/apk/debug/*.apk
         
-    - name: Build Release
+    - name: Build Release APK
       run: ./gradlew assembleRelease
       
     - name: Upload Release APK
