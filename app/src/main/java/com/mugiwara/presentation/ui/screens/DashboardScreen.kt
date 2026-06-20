@@ -1,6 +1,7 @@
 package com.mugiwara.presentation.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -147,13 +148,6 @@ fun DashboardScreen(
                 else -> {}
             }
         }
-    }
-}
-
-@Composable
-fun Box(modifier: Modifier = Modifier, contentAlignment: Alignment, content: @Composable () -> Unit) {
-    androidx.compose.foundation.layout.Box(modifier = modifier, contentAlignment = contentAlignment) {
-        content()
     }
 }
 
