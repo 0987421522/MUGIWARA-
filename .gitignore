@@ -32,3 +32,4 @@ Thumbs.db
 # Keystore
 *.jks
 *.keystore
+local.properties
