@@ -11,11 +11,13 @@ import com.mugiwara.R
 import com.mugiwara.presentation.ui.MainActivity
 import com.mugiwara.utils.Constants
 import javax.inject.Inject
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Singleton
 
 @Singleton
 class NotificationManager @Inject constructor(
-    private val context: Context
+    @ApplicationContext private val context: Context
 ) {
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     
