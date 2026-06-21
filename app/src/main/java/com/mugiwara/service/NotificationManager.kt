@@ -10,9 +10,8 @@ import androidx.core.app.NotificationCompat
 import com.mugiwara.R
 import com.mugiwara.presentation.ui.MainActivity
 import com.mugiwara.utils.Constants
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Singleton
 
 @Singleton
