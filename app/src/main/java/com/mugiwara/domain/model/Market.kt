@@ -4,7 +4,7 @@ data class Market(
     val id: String,
     val name: String,
     val symbol: String,
-    val category: MarketCategory,
+    val category: String,
     val price: Double,
     val bid: Double,
     val ask: Double,
@@ -13,10 +13,10 @@ data class Market(
     val changePercent: Double,
     val high24h: Double,
     val low24h: Double,
-    val volume24h: Double,
-    val isOpen: Boolean
+    val volume24h: Long,
+    val isOpen: Boolean,
+    val openTime: Long,
+    val closeTime: Long,
+    val timezone: String,
+    val updatedAt: Long
 )
-
-enum class MarketCategory {
-    FOREX, GOLD, SILVER, CRYPTO, INDICES, STOCKS
-}

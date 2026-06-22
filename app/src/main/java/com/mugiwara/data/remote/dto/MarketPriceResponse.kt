@@ -9,6 +9,5 @@ data class MarketPriceResponse(
     val changePercent: Double,
     val high: Double,
     val low: Double,
-    val volume: Double,
-    val timestamp: Long
+    val volume: Long
 )

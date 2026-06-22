@@ -1,15 +1,15 @@
 package com.mugiwara.domain.model
 
 data class Settings(
-    val autoTrading: Boolean,
-    val notifications: Boolean,
-    val darkMode: Boolean,
-    val riskManagement: Boolean,
-    val defaultRiskPercent: Double,
-    val defaultStopLossPips: Int,
-    val defaultTakeProfitPips: Int,
-    val maxDailyTrades: Int,
-    val maxDailyLoss: Double,
-    val trailingStopEnabled: Boolean,
-    val trailingStopPips: Int
+    val autoTrading: Boolean = false,
+    val notifications: Boolean = true,
+    val darkMode: Boolean = true,
+    val riskManagement: Boolean = true,
+    val defaultRiskPercent: Double = 1.0,
+    val defaultStopLossPips: Int = 20,
+    val defaultTakeProfitPips: Int = 40,
+    val maxDailyTrades: Int = 10,
+    val maxDailyLoss: Double = 100.0,
+    val trailingStopEnabled: Boolean = false,
+    val trailingStopPips: Int = 20
 )

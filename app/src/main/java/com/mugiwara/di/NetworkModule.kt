@@ -16,36 +16,31 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    
+
     @Provides
     @Singleton
-    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().apply {
+    fun provideOkHttpClient(): OkHttpClient {
+        val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
-    }
-    
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
+            .addInterceptor(logging)
             .build()
     }
-    
+
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofit(client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL_MT5)
-            .client(okHttpClient)
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-    
+
     @Provides
     @Singleton
     fun provideMT5ApiService(retrofit: Retrofit): MT5ApiService {
