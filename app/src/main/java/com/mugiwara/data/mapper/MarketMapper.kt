@@ -20,11 +20,15 @@ object MarketMapper {
             changePercent = entity.changePercent,
             high24h = entity.high24h,
             low24h = entity.low24h,
-            volume24h = entity.volume24h,
-            isOpen = entity.isOpen
+            volume24h = entity.volume24h.toLong(),
+            isOpen = entity.isOpen,
+            openTime = entity.openTime,
+            closeTime = entity.closeTime,
+            timezone = entity.timezone,
+            updatedAt = entity.updatedAt
         )
     }
-    
+
     fun toEntity(domain: Market): MarketEntity {
         return MarketEntity(
             id = domain.id,
@@ -39,15 +43,15 @@ object MarketMapper {
             changePercent = domain.changePercent,
             high24h = domain.high24h,
             low24h = domain.low24h,
-            volume24h = domain.volume24h,
+            volume24h = domain.volume24h.toDouble(),
             isOpen = domain.isOpen,
-            openTime = 0,
-            closeTime = 0,
-            timezone = "UTC",
-            updatedAt = System.currentTimeMillis()
+            openTime = domain.openTime,
+            closeTime = domain.closeTime,
+            timezone = domain.timezone,
+            updatedAt = domain.updatedAt
         )
     }
-    
+
     fun fromDto(dto: MarketPriceResponse): MarketEntity {
         return MarketEntity(
             id = dto.symbol,
@@ -62,7 +66,7 @@ object MarketMapper {
             changePercent = dto.changePercent,
             high24h = dto.high,
             low24h = dto.low,
-            volume24h = dto.volume,
+            volume24h = dto.volume.toDouble(),
             isOpen = true,
             openTime = 0,
             closeTime = 0,

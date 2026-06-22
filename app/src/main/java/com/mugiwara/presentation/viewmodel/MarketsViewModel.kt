@@ -2,63 +2,54 @@ package com.mugiwara.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mugiwara.data.mapper.MarketMapper
+import com.mugiwara.data.repository.MarketRepository
 import com.mugiwara.domain.model.Market
-import com.mugiwara.domain.usecase.GetMarketsUseCase
-import com.mugiwara.domain.usecase.GetOpenMarketsUseCase
+import com.mugiwara.utils.Result
 import com.mugiwara.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MarketsViewModel @Inject constructor(
-    private val getMarketsUseCase: GetMarketsUseCase,
-    private val getOpenMarketsUseCase: GetOpenMarketsUseCase
+    private val marketRepository: MarketRepository
 ) : ViewModel() {
 
-    private val _markets = MutableStateFlow<UiState<List<Market>>>(UiState.Loading)
-    val markets: StateFlow<UiState<List<Market>>> = _markets.asStateFlow()
+    private val _markets = MutableStateFlow<List<Market>>(emptyList())
+    val markets: StateFlow<List<Market>> = _markets.asStateFlow()
 
-    private val _openMarkets = MutableStateFlow<UiState<List<Market>>>(UiState.Loading)
-    val openMarkets: StateFlow<UiState<List<Market>>> = _openMarkets.asStateFlow()
-
-    private val _selectedCategory = MutableStateFlow<String?>(null)
-    val selectedCategory: StateFlow<String?> = _selectedCategory.asStateFlow()
+    private val _fetchState = MutableStateFlow<UiState<List<Market>>>(UiState.Idle)
+    val fetchState: StateFlow<UiState<List<Market>>> = _fetchState.asStateFlow()
 
     init {
         loadMarkets()
-        loadOpenMarkets()
     }
 
-    fun loadMarkets() {
+    private fun loadMarkets() {
         viewModelScope.launch {
-            getMarketsUseCase()
-                .onStart { _markets.value = UiState.Loading }
-                .catch { e -> _markets.value = UiState.Error(e.message ?: "Unknown error") }
-                .collect { markets ->
-                    _markets.value = UiState.Success(markets)
-                }
+            marketRepository.getAllMarkets().collect { entities ->
+                _markets.value = entities.map { MarketMapper.toDomain(it) }
+            }
         }
     }
 
-    fun loadOpenMarkets() {
+    fun fetchPrices(token: String) {
         viewModelScope.launch {
-            getOpenMarketsUseCase()
-                .onStart { _openMarkets.value = UiState.Loading }
-                .catch { e -> _openMarkets.value = UiState.Error(e.message ?: "Unknown error") }
-                .collect { markets ->
-                    _openMarkets.value = UiState.Success(markets)
+            _fetchState.value = UiState.Loading
+            val result = marketRepository.fetchMarketPrices(token)
+            when (result) {
+                is Result.Success -> {
+                    val markets = result.data.map { MarketMapper.toDomain(it) }
+                    _fetchState.value = UiState.Success(markets)
                 }
+                is Result.Error -> {
+                    _fetchState.value = UiState.Error(result.message)
+                }
+            }
         }
-    }
-
-    fun selectCategory(category: String?) {
-        _selectedCategory.value = category
-    }
-
-    fun refreshMarkets() {
-        loadMarkets()
-        loadOpenMarkets()
     }
 }

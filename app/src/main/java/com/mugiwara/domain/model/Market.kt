@@ -4,7 +4,7 @@ data class Market(
     val id: String,
     val name: String,
     val symbol: String,
-    val category: String,
+    val category: MarketCategory,
     val price: Double,
     val bid: Double,
     val ask: Double,
@@ -20,3 +20,7 @@ data class Market(
     val timezone: String,
     val updatedAt: Long
 )
+
+enum class MarketCategory {
+    FOREX, CRYPTO, INDICES, COMMODITIES, STOCKS, CFD
+}

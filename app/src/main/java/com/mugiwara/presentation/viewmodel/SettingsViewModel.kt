@@ -2,85 +2,70 @@ package com.mugiwara.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mugiwara.data.mapper.SettingsMapper
+import com.mugiwara.data.repository.SettingsRepository
 import com.mugiwara.domain.model.Settings
-import com.mugiwara.domain.usecase.GetSettingsUseCase
-import com.mugiwara.domain.usecase.SaveSettingsUseCase
-import com.mugiwara.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val getSettingsUseCase: GetSettingsUseCase,
-    private val saveSettingsUseCase: SaveSettingsUseCase
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
-    private val _settings = MutableStateFlow<UiState<Settings>>(UiState.Loading)
-    val settings: StateFlow<UiState<Settings>> = _settings.asStateFlow()
-
-    private val _saveResult = MutableSharedFlow<String>()
-    val saveResult: SharedFlow<String> = _saveResult.asSharedFlow()
+    private val _settings = MutableStateFlow(Settings())
+    val settings: StateFlow<Settings> = _settings.asStateFlow()
 
     init {
         loadSettings()
     }
 
-    fun loadSettings() {
+    private fun loadSettings() {
         viewModelScope.launch {
-            getSettingsUseCase()
-                .onStart { _settings.value = UiState.Loading }
-                .catch { e -> _settings.value = UiState.Error(e.message ?: "Unknown error") }
-                .collect { settings ->
-                    if (settings != null) {
-                        _settings.value = UiState.Success(settings)
-                    } else {
-                        _settings.value = UiState.Error("Settings not found")
-                    }
+            settingsRepository.getSettings().collect { entity ->
+                if (entity != null) {
+                    _settings.value = SettingsMapper.toDomain(entity)
                 }
-        }
-    }
-
-    fun saveSettings(settings: Settings) {
-        viewModelScope.launch {
-            try {
-                saveSettingsUseCase(settings)
-                _saveResult.emit("Settings saved successfully")
-                loadSettings()
-            } catch (e: Exception) {
-                _saveResult.emit("Failed to save settings: ${e.message}")
             }
         }
     }
 
-    fun updateAutoTrading(enabled: Boolean) {
-        val current = (_settings.value as? UiState.Success<Settings>)?.data ?: return
-        saveSettings(current.copy(autoTrading = enabled))
+    fun updateSettings(newSettings: Settings) {
+        viewModelScope.launch {
+            settingsRepository.saveSettings(SettingsMapper.toEntity(newSettings))
+            _settings.value = newSettings
+        }
     }
 
-    fun updateNotifications(enabled: Boolean) {
-        val current = (_settings.value as? UiState.Success<Settings>)?.data ?: return
-        saveSettings(current.copy(notifications = enabled))
+    fun toggleAutoTrading() {
+        viewModelScope.launch {
+            val updated = _settings.value.copy(autoTrading = !_settings.value.autoTrading)
+            updateSettings(updated)
+        }
     }
 
-    fun updateDarkMode(enabled: Boolean) {
-        val current = (_settings.value as? UiState.Success<Settings>)?.data ?: return
-        saveSettings(current.copy(darkMode = enabled))
-    }
-
-    fun updateRiskManagement(enabled: Boolean) {
-        val current = (_settings.value as? UiState.Success<Settings>)?.data ?: return
-        saveSettings(current.copy(riskManagement = enabled))
+    fun toggleNotifications() {
+        viewModelScope.launch {
+            val updated = _settings.value.copy(notifications = !_settings.value.notifications)
+            updateSettings(updated)
+        }
     }
 
     fun updateRiskPercent(percent: Double) {
-        val current = (_settings.value as? UiState.Success<Settings>)?.data ?: return
-        saveSettings(current.copy(defaultRiskPercent = percent))
+        viewModelScope.launch {
+            val updated = _settings.value.copy(defaultRiskPercent = percent)
+            updateSettings(updated)
+        }
     }
 
-    fun updateMaxDailyTrades(count: Int) {
-        val current = (_settings.value as? UiState.Success<Settings>)?.data ?: return
-        saveSettings(current.copy(maxDailyTrades = count))
+    fun updateMaxDailyLoss(loss: Double) {
+        viewModelScope.launch {
+            val updated = _settings.value.copy(maxDailyLoss = loss)
+            updateSettings(updated)
+        }
     }
 }

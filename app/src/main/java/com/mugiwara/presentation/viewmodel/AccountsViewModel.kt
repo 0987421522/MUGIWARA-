@@ -2,92 +2,71 @@ package com.mugiwara.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mugiwara.data.mapper.AccountMapper
+import com.mugiwara.data.repository.AccountRepository
 import com.mugiwara.domain.model.Account
-import com.mugiwara.domain.usecase.*
+import com.mugiwara.utils.Result
 import com.mugiwara.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AccountsViewModel @Inject constructor(
-    private val getAccountsUseCase: GetAccountsUseCase,
-    private val getActiveAccountUseCase: GetActiveAccountUseCase,
-    private val addAccountUseCase: AddAccountUseCase,
-    private val deleteAccountUseCase: DeleteAccountUseCase,
-    private val setActiveAccountUseCase: SetActiveAccountUseCase
+    private val accountRepository: AccountRepository
 ) : ViewModel() {
 
-    private val _accounts = MutableStateFlow<UiState<List<Account>>>(UiState.Loading)
-    val accounts: StateFlow<UiState<List<Account>>> = _accounts.asStateFlow()
+    private val _accounts = MutableStateFlow<List<Account>>(emptyList())
+    val accounts: StateFlow<List<Account>> = _accounts.asStateFlow()
 
-    private val _activeAccount = MutableStateFlow<UiState<Account?>>(UiState.Loading)
-    val activeAccount: StateFlow<UiState<Account?>> = _activeAccount.asStateFlow()
-
-    private val _operationResult = MutableSharedFlow<String>()
-    val operationResult: SharedFlow<String> = _operationResult.asSharedFlow()
+    private val _loginState = MutableStateFlow<UiState<String>>(UiState.Idle)
+    val loginState: StateFlow<UiState<String>> = _loginState.asStateFlow()
 
     init {
         loadAccounts()
-        loadActiveAccount()
     }
 
-    fun loadAccounts() {
+    private fun loadAccounts() {
         viewModelScope.launch {
-            getAccountsUseCase()
-                .onStart { _accounts.value = UiState.Loading }
-                .catch { e -> _accounts.value = UiState.Error(e.message ?: "Unknown error") }
-                .collect { accounts ->
-                    _accounts.value = UiState.Success(accounts)
-                }
+            accountRepository.getAllAccounts().collect { entities ->
+                _accounts.value = entities.map { AccountMapper.toDomain(it) }
+            }
         }
     }
 
-    fun loadActiveAccount() {
+    fun login(server: String, login: String, password: String) {
         viewModelScope.launch {
-            getActiveAccountUseCase()
-                .onStart { _activeAccount.value = UiState.Loading }
-                .catch { e -> _activeAccount.value = UiState.Error(e.message ?: "Unknown error") }
-                .collect { account ->
-                    _activeAccount.value = UiState.Success(account)
+            _loginState.value = UiState.Loading
+            val result = accountRepository.login(server, login, password)
+            when (result) {
+                is Result.Success -> {
+                    _loginState.value = UiState.Success(result.data)
                 }
+                is Result.Error -> {
+                    _loginState.value = UiState.Error(result.message)
+                }
+            }
         }
     }
 
     fun addAccount(account: Account) {
         viewModelScope.launch {
-            try {
-                addAccountUseCase(account)
-                _operationResult.emit("Account added successfully")
-                loadAccounts()
-            } catch (e: Exception) {
-                _operationResult.emit("Failed to add account: ${e.message}")
-            }
+            accountRepository.addAccount(AccountMapper.toEntity(account))
         }
     }
 
     fun deleteAccount(id: String) {
         viewModelScope.launch {
-            try {
-                deleteAccountUseCase(id)
-                _operationResult.emit("Account deleted successfully")
-                loadAccounts()
-            } catch (e: Exception) {
-                _operationResult.emit("Failed to delete account: ${e.message}")
-            }
+            accountRepository.deleteAccount(id)
         }
     }
 
-    fun setActiveAccount(id: String) {
+    fun setActive(id: String) {
         viewModelScope.launch {
-            try {
-                setActiveAccountUseCase(id)
-                _operationResult.emit("Account activated successfully")
-                loadActiveAccount()
-            } catch (e: Exception) {
-                _operationResult.emit("Failed to activate account: ${e.message}")
-            }
+            accountRepository.setActiveAccount(id)
         }
     }
 }

@@ -2,63 +2,41 @@ package com.mugiwara.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mugiwara.data.mapper.TradeMapper
+import com.mugiwara.data.repository.TradeRepository
 import com.mugiwara.domain.model.Trade
-import com.mugiwara.domain.usecase.GetActiveTradesUseCase
-import com.mugiwara.domain.usecase.GetTradesUseCase
-import com.mugiwara.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class TradesViewModel @Inject constructor(
-    private val getTradesUseCase: GetTradesUseCase,
-    private val getActiveTradesUseCase: GetActiveTradesUseCase
+    private val tradeRepository: TradeRepository
 ) : ViewModel() {
 
-    private val _trades = MutableStateFlow<UiState<List<Trade>>>(UiState.Loading)
-    val trades: StateFlow<UiState<List<Trade>>> = _trades.asStateFlow()
+    private val _activeTrades = MutableStateFlow<List<Trade>>(emptyList())
+    val activeTrades: StateFlow<List<Trade>> = _activeTrades.asStateFlow()
 
-    private val _activeTrades = MutableStateFlow<UiState<List<Trade>>>(UiState.Loading)
-    val activeTrades: StateFlow<UiState<List<Trade>>> = _activeTrades.asStateFlow()
-
-    private val _showActiveOnly = MutableStateFlow(false)
-    val showActiveOnly: StateFlow<Boolean> = _showActiveOnly.asStateFlow()
+    private val _closedTrades = MutableStateFlow<List<Trade>>(emptyList())
+    val closedTrades: StateFlow<List<Trade>> = _closedTrades.asStateFlow()
 
     init {
         loadTrades()
-        loadActiveTrades()
     }
 
-    fun loadTrades() {
+    private fun loadTrades() {
         viewModelScope.launch {
-            getTradesUseCase()
-                .onStart { _trades.value = UiState.Loading }
-                .catch { e -> _trades.value = UiState.Error(e.message ?: "Unknown error") }
-                .collect { trades ->
-                    _trades.value = UiState.Success(trades)
-                }
+            tradeRepository.getActiveTrades().collect { entities ->
+                _activeTrades.value = entities.map { TradeMapper.toDomain(it) }
+            }
         }
-    }
-
-    fun loadActiveTrades() {
         viewModelScope.launch {
-            getActiveTradesUseCase()
-                .onStart { _activeTrades.value = UiState.Loading }
-                .catch { e -> _activeTrades.value = UiState.Error(e.message ?: "Unknown error") }
-                .collect { trades ->
-                    _activeTrades.value = UiState.Success(trades)
-                }
+            tradeRepository.getClosedTrades().collect { entities ->
+                _closedTrades.value = entities.map { TradeMapper.toDomain(it) }
+            }
         }
-    }
-
-    fun toggleActiveOnly() {
-        _showActiveOnly.value = !_showActiveOnly.value
-    }
-
-    fun refreshTrades() {
-        loadTrades()
-        loadActiveTrades()
     }
 }

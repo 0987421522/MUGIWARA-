@@ -14,29 +14,18 @@ class MarketRepository @Inject constructor(
     private val apiService: MT5ApiService
 ) {
     fun getAllMarkets(): Flow<List<MarketEntity>> = marketDao.getAllMarkets()
-    
-    fun getMarketsByCategory(category: String): Flow<List<MarketEntity>> = 
-        marketDao.getMarketsByCategory(category)
-    
+    fun getMarketsByCategory(category: String): Flow<List<MarketEntity>> = marketDao.getMarketsByCategory(category)
     fun getOpenMarkets(): Flow<List<MarketEntity>> = marketDao.getOpenMarkets()
-    
+
     suspend fun getMarketById(id: String): MarketEntity? = marketDao.getMarketById(id)
-    
     suspend fun getMarketBySymbol(symbol: String): MarketEntity? = marketDao.getMarketBySymbol(symbol)
-    
     suspend fun addMarket(market: MarketEntity) = marketDao.insertMarket(market)
-    
     suspend fun addMarkets(markets: List<MarketEntity>) = marketDao.insertMarkets(markets)
-    
     suspend fun updateMarket(market: MarketEntity) = marketDao.updateMarket(market)
-    
     suspend fun deleteMarket(id: String) = marketDao.deleteMarketById(id)
-    
-    suspend fun updateMarketStatus(id: String, isOpen: Boolean) = 
-        marketDao.updateMarketStatus(id, isOpen)
-    
+    suspend fun updateMarketStatus(id: String, isOpen: Boolean) = marketDao.updateMarketStatus(id, isOpen)
     suspend fun getMarketCount(): Int = marketDao.getMarketCount()
-    
+
     suspend fun fetchMarketPrices(token: String): Result<List<MarketEntity>> {
         return try {
             val response = apiService.getMarketPrices(token)
@@ -48,7 +37,7 @@ class MarketRepository @Inject constructor(
                             id = dto.symbol,
                             name = dto.symbol,
                             symbol = dto.symbol,
-                            category = "Forex",
+                            category = "FOREX",
                             price = (dto.bid + dto.ask) / 2,
                             bid = dto.bid,
                             ask = dto.ask,
@@ -57,7 +46,7 @@ class MarketRepository @Inject constructor(
                             changePercent = dto.changePercent,
                             high24h = dto.high,
                             low24h = dto.low,
-                            volume24h = dto.volume,
+                            volume24h = dto.volume.toDouble(),
                             isOpen = true,
                             openTime = 0,
                             closeTime = 0,
