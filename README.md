@@ -74,16 +74,7 @@ MUGIWARA/
 
 ### البناء
 
-```bash
-# استنساخ المستودع
-git clone https://github.com/yourusername/MUGIWARA.git
 
-# بناء المشروع
-./gradlew assembleDebug
-
-# أو بناء الإصدار النهائي
-./gradlew assembleRelease
-```
 
 ## 🤝 المساهمة
 
