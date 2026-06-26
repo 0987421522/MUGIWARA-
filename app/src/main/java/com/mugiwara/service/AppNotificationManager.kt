@@ -9,11 +9,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AppNotificationManager @Inject constructor(private val context: Context) {
+class AppNotificationManager @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
 
     companion object {
         const val CHANNEL_ID = "mugiwara_trading_channel"
