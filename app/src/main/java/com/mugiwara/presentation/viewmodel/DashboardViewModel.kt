@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,7 +45,7 @@ class DashboardViewModel @Inject constructor(
             _uiState.value = UiState.Loading
             try {
                 val accountCount = accountRepository.getAccountCount()
-                val activeAccount = accountRepository.getActiveAccount()
+                val activeAccount = accountRepository.getActiveAccount().first()
                 val balance = activeAccount?.balance ?: 0.0
                 val totalProfit = tradeRepository.getTotalProfit()
                 val activeTrades = tradeRepository.getActiveTradeCount()
