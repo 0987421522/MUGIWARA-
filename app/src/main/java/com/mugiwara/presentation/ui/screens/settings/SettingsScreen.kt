@@ -53,7 +53,7 @@ fun SettingsScreen(
                         checked = settings.autoTrading,
                         onCheckedChange = { viewModel.toggleAutoTrading() }
                     )
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
                     SettingsSwitch(
                         title = "Notifications",
                         subtitle = "Receive trade alerts and updates",
@@ -98,12 +98,12 @@ fun SettingsScreen(
                     SectionTitle("Parameters")
                     Spacer(modifier = Modifier.height(8.dp))
                     ParamRow("Stop Loss", "${settings.defaultStopLossPips} pips")
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
                     ParamRow("Take Profit", "${settings.defaultTakeProfitPips} pips")
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
                     ParamRow("Max Daily Trades", "${settings.maxDailyTrades}")
                     if (settings.trailingStopEnabled) {
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                        Divider(modifier = Modifier.padding(vertical = 8.dp))
                         ParamRow("Trailing Stop", "${settings.trailingStopPips} pips")
                     }
                 }
