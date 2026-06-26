@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mugiwara.R
 import com.mugiwara.presentation.viewmodel.DashboardViewModel
+import com.mugiwara.presentation.viewmodel.DashboardData
 import com.mugiwara.utils.UiState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,7 +40,7 @@ import com.mugiwara.utils.UiState
 fun DashboardScreen(
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
-    val statsState by viewModel.stats.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -66,7 +67,7 @@ fun DashboardScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            when (val state = statsState) {
+            when (val state = uiState) {
                 is UiState.Loading -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -75,23 +76,23 @@ fun DashboardScreen(
                         CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                     }
                 }
-                is UiState.Success -> {
+                is UiState.Success<DashboardData> -> {
                     val stats = state.data
-                    
+
                     DashboardStatCard(
                         title = stringResource(R.string.total_profit),
                         value = "+$${String.format("%.2f", stats.totalProfit)}",
                         valueColor = if (stats.totalProfit >= 0) Color(0xFF4CAF50) else Color(0xFFCF6679),
                         modifier = Modifier.fillMaxWidth()
                     )
-                    
+
                     DashboardStatCard(
                         title = stringResource(R.string.active_trades),
                         value = stats.activeTrades.toString(),
                         valueColor = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -102,17 +103,17 @@ fun DashboardScreen(
                             valueColor = Color(0xFF4CAF50),
                             modifier = Modifier.weight(1f)
                         )
-                        
+
                         DashboardStatCard(
                             title = stringResource(R.string.balance),
-                            value = "$${String.format("%.2f", stats.balance)}",
+                            value = "$${String.format("%.2f", stats.totalBalance)}",
                             valueColor = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.weight(1f)
                         )
                     }
-                    
+
                     Spacer(modifier = Modifier.height(8.dp))
-                    
+
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
@@ -128,9 +129,9 @@ fun DashboardScreen(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
-                            
+
                             Spacer(modifier = Modifier.height(12.dp))
-                            
+
                             ActivityItem("EUR/USD", "BUY", "+$45.20", Color(0xFF4CAF50))
                             ActivityItem("GBP/JPY", "SELL", "-$12.50", Color(0xFFCF6679))
                             ActivityItem("XAU/USD", "BUY", "+$89.00", Color(0xFF4CAF50))
@@ -173,9 +174,9 @@ fun DashboardStatCard(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            
+
             Spacer(modifier = Modifier.height(4.dp))
-            
+
             Text(
                 text = value,
                 style = MaterialTheme.typography.headlineMedium,
@@ -210,14 +211,14 @@ fun ActivityItem(
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            
+
             Text(
                 text = type,
                 style = MaterialTheme.typography.labelMedium,
                 color = if (type == "BUY") Color(0xFF4CAF50) else Color(0xFFCF6679)
             )
         }
-        
+
         Text(
             text = profit,
             style = MaterialTheme.typography.bodyLarge,
