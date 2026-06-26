@@ -31,4 +31,7 @@ object Constants {
 
     const val NOTIFICATION_CHANNEL_ID = "mugiwara_trading"
     const val NOTIFICATION_CHANNEL_NAME = "Mugiwara Trading"
+
+    // Added missing constant
+    const val SHARED_PREF_NAME = "mugiwara_prefs"
 }
