@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 /**
  * Data model for Account Entity (DTO)
  */
-data class AccountEntity(
+data class ApiAccountDto(
     @SerializedName("id")
     val id: String,
     @SerializedName("account_number")
