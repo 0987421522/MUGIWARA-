@@ -1,7 +1,7 @@
 package com.mugiwara.data.local
 
 import androidx.room.*
-import com.mugiwara.data.model.SettingsEntity
+import com.mugiwara.data.local.entity.SignalEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
