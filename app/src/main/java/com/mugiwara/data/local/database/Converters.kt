@@ -48,9 +48,6 @@ class Converters {
         return if (map == null) null else gson.toJson(map)
     }
     
-    @TypeConverter
-    fun fromLong(value: Long?): Long? = value
-    
-    @TypeConverter
-    fun toLong(value: Long?): Long? = value
+    // تم حذف fromLong و toLong نهائياً لأن Room يدعم Long بشكل افتراضي
+    // وكان وجودهما يسبب خطأ Multiple methods define the same conversion
 }
